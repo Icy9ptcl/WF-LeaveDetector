@@ -16,22 +16,22 @@ namespace WF_LeaveDetector1 {
         int Backy;
         int x;
         int y;
-        bool Real = false;
+        bool Real = true;
 
-        enum LeavingToDo {
-            Nothing,ShutDown, Reboot, Hybernate, Sleep,Lock
+        public enum LeavingToDo {
+            Nothing, Sleep, Lock,ShutDown, Reboot, Hybernate
         };
 
-        LeavingToDo LeavingToDoFlag = LeavingToDo.Nothing;
+        public LeavingToDo LeavingToDoFlag = LeavingToDo.Nothing;
 
-        bool EnabledFlag = true;
+        bool EnabledFlag = false;
 
         DateTimeOffset BackedTime = DateTimeOffset.Now;
         TimeSpan TimeDiff = DateTimeOffset.Now.Offset;
 
         public int LeaveDetectTime_H = 0;
-        public int LeaveDetectTime_M = 0;
-        public int LeaveDetectTime_S = 3;
+        public int LeaveDetectTime_M = 3;
+        public int LeaveDetectTime_S = 0;
         public long LeaveDetectTime_ms;
 
         // ここから
@@ -130,6 +130,30 @@ namespace WF_LeaveDetector1 {
             return FormattedString;
         }
 
+        public string GetTimeString(int H,int M,int S) {
+            string TempS = "";
+
+            if (H != 0) {
+                TempS += H.ToString() + "時間 ";
+            }
+
+            if (M != 0) {
+                TempS += M.ToString() + "分 ";
+            }
+
+            if ( S != 0 ) {
+                TempS += S.ToString() + "秒 ";
+            }
+
+            //最後のスペースは消す
+            if (TempS.Substring(TempS.Length - 1 , 1) == " ") {
+                TempS = TempS.Substring(0,TempS.Length - 1);
+            } 
+
+            return TempS;
+        }
+
+
         private void Form1_Load(object sender , EventArgs e) {
             TickingTimer1.Start();
         }
@@ -142,20 +166,64 @@ namespace WF_LeaveDetector1 {
             }
         }
 
+        private string GetToDo(LeavingToDo flag) {
+            switch (flag) {
+
+                case LeavingToDo.Nothing:
+                    return "何もしない";
+
+                case LeavingToDo.Sleep:
+                    return "スリープ";
+
+                case LeavingToDo.Lock:
+                    return "ロック";
+
+                case LeavingToDo.ShutDown:
+                    return "シャットダウン";
+
+                case LeavingToDo.Reboot:
+                    return "再起動";
+
+                case LeavingToDo.Hybernate:
+                    return "休止状態";
+
+                default:
+                    return "";
+            }
+               
+        }
+
         private void ChangeStatus(bool flag) {
+            string StS = "";
+            if ((GetToDo(LeavingToDoFlag) == "") || ( ( GetToDo(LeavingToDoFlag) == "何もしない" ))) {
+                StS = "通知します";
+            } else {
+                StS = GetToDo(LeavingToDoFlag) + "を実行します";
+            }
+
+
             EnabledFlag = flag;
             BackedTime = DateTimeOffset.Now;
             if ( EnabledFlag == true ) {
                 ControlButton.Text = "無効にする";
                 TickingTimer1.Start();
-                StatusLabel.Text = "離席時間 ";
+                StatusLabel.Text = "離席時間 " + GetTimeString(LeaveDetectTime_H , LeaveDetectTime_M , LeaveDetectTime_S) + "後に" + StS;
             } else {
                 ControlButton.Text = "有効にする";
                 TickingTimer1.Stop();
                 StatusLabel.Text = "タイマーは無効です";
             }
         }
-
+        /*
+        public LeavingToDo LeavingTodoFlag {
+            set {
+                LeavingToDo LeavingToDoFlag = value;
+            }
+            get {
+                return LeavingToDoFlag;
+            }
+        }
+        */
         private void LeaveDeterminatedTodo() {
             ChangeStatus(false);
 
@@ -301,7 +369,8 @@ namespace WF_LeaveDetector1 {
         }
 
         private void ConfigButton_Click(object sender , EventArgs e) {
-            Setting f = new Setting();
+            Setting f = new Setting(this);
+            ChangeStatus(false);
             f.ShowDialog(this);
             f.Dispose();
         }

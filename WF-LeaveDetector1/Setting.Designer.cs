@@ -134,8 +134,9 @@
             "休止状態"});
             this.TodoSetting_ImplementsBox.Location = new System.Drawing.Point(3, 3);
             this.TodoSetting_ImplementsBox.Name = "TodoSetting_ImplementsBox";
-            this.TodoSetting_ImplementsBox.Size = new System.Drawing.Size(120, 112);
+            this.TodoSetting_ImplementsBox.Size = new System.Drawing.Size(120, 76);
             this.TodoSetting_ImplementsBox.TabIndex = 0;
+            this.TodoSetting_ImplementsBox.SelectedIndexChanged += new System.EventHandler(this.TodoSetting_ImplementsBox_SelectedIndexChanged);
             // 
             // TodoSetting_SoundCheckBox
             // 

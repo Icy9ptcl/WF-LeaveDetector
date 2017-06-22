@@ -124,7 +124,7 @@
             this.ControlButton.Name = "ControlButton";
             this.ControlButton.Size = new System.Drawing.Size(133, 58);
             this.ControlButton.TabIndex = 0;
-            this.ControlButton.Text = "無効にする";
+            this.ControlButton.Text = "有効にする";
             this.ControlButton.UseVisualStyleBackColor = true;
             this.ControlButton.Click += new System.EventHandler(this.ControlButton_Click);
             // 
